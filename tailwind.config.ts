@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -65,13 +64,13 @@ export default {
 				},
 				// FinTown Custom Colors
 				finpurple: {
-					DEFAULT: '#9b87f5',
-					dark: '#7E69AB',
-					light: '#E5DEFF',
+					DEFAULT: '#9876FF',
+					dark: '#6F5BAD',
+					light: '#D3C7FF',
 				},
 				fingold: {
-					DEFAULT: '#FEF7CD',
-					dark: '#E5D165',
+					DEFAULT: '#E5D9A8',
+					dark: '#C0B66C',
 				},
 			},
 			borderRadius: {
