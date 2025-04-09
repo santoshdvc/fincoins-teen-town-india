@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useGameContext } from "@/context/GameContext";
-import { Coins, Menu } from "lucide-react";
+import { Coins, Menu, LogIn } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -40,6 +40,13 @@ export function Navbar() {
               <span className="text-sm font-medium">{balance.toLocaleString()} FC</span>
             </div>
             
+            <Link to="/auth" className="ml-4 hidden sm:block">
+              <Button variant="outline" size="sm" className="flex items-center">
+                <LogIn className="h-4 w-4 mr-2" />
+                Login
+              </Button>
+            </Link>
+            
             <div className="sm:hidden flex ml-3">
               <button
                 type="button"
@@ -66,6 +73,12 @@ export function Navbar() {
             </Link>
             <Link to="/invest">
               <Button variant="ghost" className="w-full justify-start">Invest</Button>
+            </Link>
+            <Link to="/auth">
+              <Button variant="ghost" className="w-full justify-start">
+                <LogIn className="h-4 w-4 mr-2" />
+                Login
+              </Button>
             </Link>
           </div>
         </div>

@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import Marketplace from "./pages/Marketplace";
 import Invest from "./pages/Invest";
 import NotFound from "./pages/NotFound";
+import Auth from "./pages/Auth";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/invest" element={<Invest />} />
+            <Route path="/auth" element={<Auth />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
