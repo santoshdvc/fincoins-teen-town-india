@@ -13,7 +13,7 @@ const Dashboard = () => {
   const { isNewUser } = useGameContext();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {isNewUser && <OnboardingWizard />}
       
       <Navbar />
@@ -88,12 +88,12 @@ const Dashboard = () => {
           </Link>
         </div>
         
-        <div className="mt-8 bg-finpurple-light p-6 rounded-lg">
+        <div className="mt-8 bg-card p-6 rounded-lg">
           <div className="flex items-center gap-3 mb-3">
             <PiggyBank className="h-6 w-6 text-finpurple" />
             <h2 className="text-xl font-bold">Financial Tip of the Day</h2>
           </div>
-          <p className="text-gray-700">
+          <p className="text-muted-foreground">
             Start saving early! Even small amounts add up over time thanks to compound interest. 
             Try to save at least 10% of any money you receive.
           </p>
