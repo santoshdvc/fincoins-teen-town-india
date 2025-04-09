@@ -10,13 +10,13 @@ export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   return (
-    <nav className="bg-white border-b border-gray-200 sticky top-0 z-10">
+    <nav className="bg-card border-b border-border sticky top-0 z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 flex items-center">
               <Coins className="h-8 w-8 text-finpurple animate-coin-bounce" />
-              <span className="ml-2 text-xl font-bold">FinTown</span>
+              <span className="ml-2 text-xl font-bold text-foreground">FinTown</span>
             </Link>
           </div>
           
@@ -43,7 +43,7 @@ export function Navbar() {
             <div className="sm:hidden flex ml-3">
               <button
                 type="button"
-                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none"
+                className="inline-flex items-center justify-center p-2 rounded-md text-foreground hover:bg-muted focus:outline-none"
                 aria-expanded="false"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
               >
@@ -57,7 +57,7 @@ export function Navbar() {
       {/* Mobile menu */}
       {isMenuOpen && (
         <div className="sm:hidden">
-          <div className="pt-2 pb-3 space-y-1 px-4 bg-white shadow-lg">
+          <div className="pt-2 pb-3 space-y-1 px-4 bg-card shadow-lg">
             <Link to="/">
               <Button variant="ghost" className="w-full justify-start">Home</Button>
             </Link>
