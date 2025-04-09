@@ -5,33 +5,33 @@
 
 @layer base {
   :root {
-    --background: 255 255 255;
-    --foreground: 20 20 20;
+    --background: 240 10% 10%;
+    --foreground: 210 40% 98%;
 
-    --card: 255 255 255;
-    --card-foreground: 20 20 20;
+    --card: 240 10% 12%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 255 255 255;
-    --popover-foreground: 20 20 20;
+    --popover: 240 10% 12%;
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 252 245 208;
-    --primary-foreground: 20 20 20;
+    --primary: 255 20% 60%;
+    --primary-foreground: 210 40% 98%;
 
-    --secondary: 220 215 252;
-    --secondary-foreground: 20 20 20;
+    --secondary: 260 20% 40%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 240 240 245;
-    --muted-foreground: 115 115 115;
+    --muted: 240 10% 20%;
+    --muted-foreground: 240 5% 65%;
 
-    --accent: 155 135 245;
-    --accent-foreground: 250 250 250;
+    --accent: 270 50% 70%;
+    --accent-foreground: 210 40% 98%;
 
-    --destructive: 235 87 87;
-    --destructive-foreground: 250 250 250;
+    --destructive: 0 60% 50%;
+    --destructive-foreground: 210 40% 98%;
 
-    --border: 240 240 242;
-    --input: 240 240 242;
-    --ring: 155 135 245;
+    --border: 240 10% 20%;
+    --input: 240 10% 20%;
+    --ring: 270 50% 70%;
 
     --radius: 0.75rem;
   }
@@ -48,11 +48,11 @@
 }
 
 .fin-gradient {
-  background: linear-gradient(135deg, #9b87f5 0%, #7E69AB 100%);
+  background: linear-gradient(135deg, #9876FF 0%, #6F5BAD 100%);
 }
 
 .fin-card {
-  @apply bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300;
+  @apply bg-card rounded-xl shadow-md overflow-hidden transition-all duration-300;
 }
 
 .fin-card:hover {
