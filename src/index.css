@@ -58,3 +58,18 @@
 .fin-card:hover {
   @apply shadow-lg -translate-y-1;
 }
+
+@keyframes coin-fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(200px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
