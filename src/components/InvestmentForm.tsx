@@ -52,7 +52,7 @@ export function InvestmentForm() {
   };
 
   return (
-    <Card>
+    <Card className="bg-card">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <TrendingUp className="h-5 w-5" /> Make an Investment

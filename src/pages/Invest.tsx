@@ -27,7 +27,7 @@ const Invest = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Navbar />
       
       <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -65,7 +65,7 @@ const Invest = () => {
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      <div className="flex justify-between items-center p-4 border rounded-lg">
+                      <div className="flex justify-between items-center p-4 border rounded-lg bg-card">
                         <div>
                           <p className="text-sm text-muted-foreground">Total Invested</p>
                           <p className="font-bold text-xl">
@@ -75,7 +75,7 @@ const Invest = () => {
                         <Coins className="h-8 w-8 text-finpurple" />
                       </div>
                       
-                      <div className="flex justify-between items-center p-4 border rounded-lg">
+                      <div className="flex justify-between items-center p-4 border rounded-lg bg-card">
                         <div>
                           <p className="text-sm text-muted-foreground">Expected Returns</p>
                           <p className="font-bold text-xl text-green-600">
@@ -93,7 +93,7 @@ const Invest = () => {
               
               <div className="space-y-6">
                 {investmentsWithDaysLeft.map((investment) => (
-                  <Card key={investment.id}>
+                  <Card key={investment.id} className="bg-card">
                     <CardContent className="p-4">
                       <div className="flex justify-between items-center mb-2">
                         <h3 className="font-bold">{investment.name}</h3>
@@ -127,7 +127,7 @@ const Invest = () => {
                 ))}
                 
                 {investments.length === 0 && (
-                  <Card className="bg-finpurple-light border-none">
+                  <Card className="bg-finpurple-light/20 border border-finpurple/30">
                     <CardContent className="p-4">
                       <h3 className="font-bold mb-2">Investment Tip</h3>
                       <p className="text-sm">
@@ -144,7 +144,7 @@ const Invest = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <InvestmentForm />
               
-              <Card className="bg-finpurple-light h-fit">
+              <Card className="bg-finpurple-light/20 border border-finpurple/30 h-fit">
                 <CardHeader className="pb-2">
                   <h3 className="font-bold">Understanding Risk & Return</h3>
                 </CardHeader>
@@ -156,7 +156,7 @@ const Invest = () => {
                   
                   <div className="space-y-4">
                     <div className="flex items-center gap-2">
-                      <div className="bg-green-100 p-2 rounded-full">
+                      <div className="bg-green-100/20 p-2 rounded-full">
                         <TrendingUp className="h-4 w-4 text-green-600" />
                       </div>
                       <div>
@@ -168,7 +168,7 @@ const Invest = () => {
                     </div>
                     
                     <div className="flex items-center gap-2">
-                      <div className="bg-amber-100 p-2 rounded-full">
+                      <div className="bg-amber-100/20 p-2 rounded-full">
                         <TrendingUp className="h-4 w-4 text-amber-600" />
                       </div>
                       <div>
@@ -180,7 +180,7 @@ const Invest = () => {
                     </div>
                     
                     <div className="flex items-center gap-2">
-                      <div className="bg-red-100 p-2 rounded-full">
+                      <div className="bg-red-100/20 p-2 rounded-full">
                         <TrendingDown className="h-4 w-4 text-red-600" />
                       </div>
                       <div>

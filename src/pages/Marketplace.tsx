@@ -14,7 +14,7 @@ const Marketplace = () => {
   const categories = [...new Set(inventory.map(item => item.category))];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Navbar />
       
       <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -67,7 +67,7 @@ const Marketplace = () => {
           </div>
         ))}
         
-        <Card className="mt-8 bg-finpurple-light">
+        <Card className="mt-8 bg-finpurple-light/20 border border-finpurple/30">
           <CardHeader className="pb-2">
             <h3 className="font-bold">Budgeting Tip</h3>
           </CardHeader>
