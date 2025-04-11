@@ -9,6 +9,7 @@ import { GameProvider } from "./context/GameContext";
 import Index from "./pages/Index";
 import Marketplace from "./pages/Marketplace";
 import Invest from "./pages/Invest";
+import Reports from "./pages/Reports";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 
@@ -28,6 +29,7 @@ const App = () => {
                 <Route path="/" element={<Index />} />
                 <Route path="/marketplace" element={<Marketplace />} />
                 <Route path="/invest" element={<Invest />} />
+                <Route path="/reports" element={<Reports />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>

@@ -6,11 +6,11 @@ import { WalletCard } from "@/components/WalletCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { useGameContext } from "@/context/GameContext";
-import { BadgeIndianRupee, FileText, PiggyBank, TrendingUp } from "lucide-react";
+import { BadgeIndianRupee, BarChart3, FileText, PiggyBank, TrendingUp } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Dashboard = () => {
-  const { isNewUser } = useGameContext();
+  const { isNewUser, isRealTimeMode, toggleRealTimeMode } = useGameContext();
 
   return (
     <div className="min-h-screen bg-background">
@@ -68,21 +68,21 @@ const Dashboard = () => {
             </Card>
           </Link>
           
-          <Link to="#" className="sm:col-span-2 md:col-span-1">
+          <Link to="/reports">
             <Card className="h-full hover:shadow-md transition-shadow">
               <CardHeader className="pb-2">
                 <div className="w-12 h-12 bg-finpurple/10 rounded-full flex items-center justify-center mb-2">
-                  <FileText className="h-6 w-6 text-finpurple" />
+                  <BarChart3 className="h-6 w-6 text-finpurple" />
                 </div>
-                <h3 className="font-bold text-lg">Financial Tips</h3>
+                <h3 className="font-bold text-lg">Financial Reports</h3>
               </CardHeader>
               <CardContent className="pb-2">
                 <p className="text-sm text-muted-foreground">
-                  Quick tips and lessons about smart money management.
+                  Track your real spending and get monthly financial reports.
                 </p>
               </CardContent>
               <CardFooter>
-                <Button variant="outline" className="w-full">Learn More</Button>
+                <Button variant="outline" className="w-full">View Reports</Button>
               </CardFooter>
             </Card>
           </Link>
@@ -97,6 +97,16 @@ const Dashboard = () => {
             Start saving early! Even small amounts add up over time thanks to compound interest. 
             Try to save at least 10% of any money you receive.
           </p>
+          {!isRealTimeMode && (
+            <div className="mt-4">
+              <Button variant="outline" onClick={toggleRealTimeMode}>
+                Enable Real-Time Tracking
+              </Button>
+              <p className="text-xs text-muted-foreground mt-2">
+                Track your actual income and expenses for a more realistic learning experience
+              </p>
+            </div>
+          )}
         </div>
       </main>
     </div>

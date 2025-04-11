@@ -27,6 +27,15 @@ type Item = {
   image?: string;
 };
 
+type Transaction = {
+  id: string;
+  amount: number;
+  type: 'income' | 'expense';
+  category: string;
+  description: string;
+  date: Date;
+};
+
 interface GameContextType {
   balance: number;
   addCoins: (amount: number) => void;
@@ -40,6 +49,15 @@ interface GameContextType {
   isNewUser: boolean;
   completeOnboarding: () => void;
   inventory: Item[];
+  isRealTimeMode: boolean;
+  toggleRealTimeMode: () => void;
+  transactions: Transaction[];
+  addTransaction: (transaction: Omit<Transaction, "id" | "date">) => void;
+  getMonthlyReport: () => {
+    totalIncome: number;
+    totalExpenses: number;
+    categories: { [key: string]: number };
+  };
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -112,6 +130,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [purchasedItems, setPurchasedItems] = useState<string[]>([]);
   const [isNewUser, setIsNewUser] = useState(true);
   const [inventory, setInventory] = useState<Item[]>(marketplaceItems);
+  const [isRealTimeMode, setIsRealTimeMode] = useState(false);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   // Check if the user is new when component mounts
   useEffect(() => {
@@ -124,11 +144,13 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const savedGameState = localStorage.getItem("fintown-gamestate");
     if (savedGameState) {
       try {
-        const { balance, challenges, investments, purchasedItems } = JSON.parse(savedGameState);
+        const { balance, challenges, investments, purchasedItems, isRealTimeMode, transactions } = JSON.parse(savedGameState);
         setBalance(balance);
         setChallenges(challenges);
         setInvestments(investments);
         setPurchasedItems(purchasedItems);
+        setIsRealTimeMode(isRealTimeMode || false);
+        setTransactions(transactions || []);
       } catch (err) {
         console.error("Error loading game state", err);
       }
@@ -138,13 +160,30 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Save game state when it changes
   useEffect(() => {
     if (!isNewUser) {
-      const gameState = { balance, challenges, investments, purchasedItems };
+      const gameState = { 
+        balance, 
+        challenges, 
+        investments, 
+        purchasedItems,
+        isRealTimeMode,
+        transactions 
+      };
       localStorage.setItem("fintown-gamestate", JSON.stringify(gameState));
     }
-  }, [balance, challenges, investments, purchasedItems, isNewUser]);
+  }, [balance, challenges, investments, purchasedItems, isNewUser, isRealTimeMode, transactions]);
 
   const addCoins = (amount: number) => {
     setBalance((prev) => prev + amount);
+    
+    if (isRealTimeMode) {
+      addTransaction({
+        amount,
+        type: 'income',
+        category: 'General',
+        description: 'Added coins',
+      });
+    }
+    
     toast({
       title: "Coins Added!",
       description: `+${amount} FinCoins have been added to your wallet.`,
@@ -162,6 +201,16 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     
     setBalance((prev) => prev - amount);
+    
+    if (isRealTimeMode) {
+      addTransaction({
+        amount,
+        type: 'expense',
+        category: 'General',
+        description: 'Spent coins',
+      });
+    }
+    
     toast({
       title: "Coins Spent",
       description: `-${amount} FinCoins have been deducted from your wallet.`,
@@ -189,6 +238,16 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     if (spendCoins(investment.amount)) {
       setInvestments((prev) => [...prev, newInvestment]);
+      
+      if (isRealTimeMode) {
+        addTransaction({
+          amount: investment.amount,
+          type: 'expense',
+          category: 'Investment',
+          description: `Investment in ${investment.name}`,
+        });
+      }
+      
       toast({
         title: "Investment Made!",
         description: `You've invested ${investment.amount} FC in ${investment.name}.`,
@@ -201,6 +260,18 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const purchaseItem = (itemId: string, price: number) => {
     if (spendCoins(price)) {
       setPurchasedItems((prev) => [...prev, itemId]);
+      
+      const item = inventory.find(item => item.id === itemId);
+      
+      if (isRealTimeMode && item) {
+        addTransaction({
+          amount: price,
+          type: 'expense',
+          category: item.category,
+          description: `Purchased ${item.name}`,
+        });
+      }
+      
       toast({
         title: "Item Purchased!",
         description: `You've bought a new item for ${price} FC.`,
@@ -213,6 +284,62 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const completeOnboarding = () => {
     setIsNewUser(false);
     localStorage.setItem("fintown-onboarded", "true");
+  };
+  
+  const toggleRealTimeMode = () => {
+    setIsRealTimeMode(prev => !prev);
+    toast({
+      title: `Real-Time Mode ${!isRealTimeMode ? 'Enabled' : 'Disabled'}`,
+      description: !isRealTimeMode 
+        ? "Your financial activities will now be tracked for monthly reports."
+        : "Real-time tracking has been disabled.",
+    });
+  };
+  
+  const addTransaction = (transaction: Omit<Transaction, "id" | "date">) => {
+    const newTransaction = {
+      ...transaction,
+      id: `tr-${Date.now()}`,
+      date: new Date(),
+    };
+    
+    setTransactions(prev => [...prev, newTransaction]);
+  };
+  
+  const getMonthlyReport = () => {
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    
+    // Filter transactions for the current month
+    const monthlyTransactions = transactions.filter(transaction => {
+      const transactionDate = new Date(transaction.date);
+      return transactionDate.getMonth() === currentMonth && 
+             transactionDate.getFullYear() === currentYear;
+    });
+    
+    // Calculate totals
+    const totalIncome = monthlyTransactions
+      .filter(t => t.type === 'income')
+      .reduce((sum, t) => sum + t.amount, 0);
+      
+    const totalExpenses = monthlyTransactions
+      .filter(t => t.type === 'expense')
+      .reduce((sum, t) => sum + t.amount, 0);
+    
+    // Calculate spending by category
+    const categories = monthlyTransactions
+      .filter(t => t.type === 'expense')
+      .reduce((acc, t) => {
+        acc[t.category] = (acc[t.category] || 0) + t.amount;
+        return acc;
+      }, {} as { [key: string]: number });
+    
+    return {
+      totalIncome,
+      totalExpenses,
+      categories
+    };
   };
 
   const value = {
@@ -228,6 +355,11 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     isNewUser,
     completeOnboarding,
     inventory,
+    isRealTimeMode,
+    toggleRealTimeMode,
+    transactions,
+    addTransaction,
+    getMonthlyReport,
   };
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
