@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "@/components/ui/use-toast";
 
@@ -36,6 +35,17 @@ type Transaction = {
   date: Date;
 };
 
+type Goal = {
+  id: string;
+  title: string;
+  description: string;
+  targetAmount: number;
+  currentAmount: number;
+  deadline?: Date;
+  completed: boolean;
+  category: string;
+};
+
 interface GameContextType {
   balance: number;
   addCoins: (amount: number) => void;
@@ -58,6 +68,10 @@ interface GameContextType {
     totalExpenses: number;
     categories: { [key: string]: number };
   };
+  goals: Goal[];
+  addGoal: (goal: Omit<Goal, "id" | "completed" | "currentAmount">) => void;
+  updateGoalProgress: (id: string, amount: number) => void;
+  completeGoal: (id: string) => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -132,6 +146,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [inventory, setInventory] = useState<Item[]>(marketplaceItems);
   const [isRealTimeMode, setIsRealTimeMode] = useState(false);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [goals, setGoals] = useState<Goal[]>([]);
 
   // Check if the user is new when component mounts
   useEffect(() => {
@@ -144,13 +159,14 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const savedGameState = localStorage.getItem("fintown-gamestate");
     if (savedGameState) {
       try {
-        const { balance, challenges, investments, purchasedItems, isRealTimeMode, transactions } = JSON.parse(savedGameState);
-        setBalance(balance);
-        setChallenges(challenges);
+        const { balance, challenges, investments, purchasedItems, isRealTimeMode, transactions, goals } = JSON.parse(savedGameState);
+        setBalance(!isRealTimeMode ? balance : 0);
+        setChallenges(!isRealTimeMode ? challenges : []);
         setInvestments(investments);
         setPurchasedItems(purchasedItems);
         setIsRealTimeMode(isRealTimeMode || false);
         setTransactions(transactions || []);
+        setGoals(goals || []);
       } catch (err) {
         console.error("Error loading game state", err);
       }
@@ -166,11 +182,12 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         investments, 
         purchasedItems,
         isRealTimeMode,
-        transactions 
+        transactions,
+        goals 
       };
       localStorage.setItem("fintown-gamestate", JSON.stringify(gameState));
     }
-  }, [balance, challenges, investments, purchasedItems, isNewUser, isRealTimeMode, transactions]);
+  }, [balance, challenges, investments, purchasedItems, isNewUser, isRealTimeMode, transactions, goals]);
 
   const addCoins = (amount: number) => {
     setBalance((prev) => prev + amount);
@@ -287,12 +304,21 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
   
   const toggleRealTimeMode = () => {
+    // Reset balance and challenges when enabling real-time mode
+    if (!isRealTimeMode) {
+      setBalance(0);
+      setChallenges([]);
+    } else {
+      setBalance(10000);
+      setChallenges(initialChallenges);
+    }
+    
     setIsRealTimeMode(prev => !prev);
     toast({
       title: `Real-Time Mode ${!isRealTimeMode ? 'Enabled' : 'Disabled'}`,
       description: !isRealTimeMode 
         ? "Your financial activities will now be tracked for monthly reports."
-        : "Real-time tracking has been disabled.",
+        : "Game mode enabled. Your balance has been reset to 10,000 FC.",
     });
   };
   
@@ -342,6 +368,51 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   };
 
+  const addGoal = (goal: Omit<Goal, "id" | "completed" | "currentAmount">) => {
+    const newGoal = {
+      ...goal,
+      id: `goal-${Date.now()}`,
+      completed: false,
+      currentAmount: 0
+    };
+    
+    setGoals(prev => [...prev, newGoal]);
+    
+    toast({
+      title: "Goal Created!",
+      description: `You've set a new goal: ${goal.title}`,
+    });
+  };
+  
+  const updateGoalProgress = (id: string, amount: number) => {
+    setGoals(prev => prev.map(goal => {
+      if (goal.id === id && !goal.completed) {
+        const newCurrentAmount = goal.currentAmount + amount;
+        const isCompleted = newCurrentAmount >= goal.targetAmount;
+        
+        return {
+          ...goal, 
+          currentAmount: newCurrentAmount,
+          completed: isCompleted
+        };
+      }
+      return goal;
+    }));
+  };
+  
+  const completeGoal = (id: string) => {
+    setGoals(prev => prev.map(goal => {
+      if (goal.id === id && !goal.completed) {
+        toast({
+          title: "Goal Achieved! 🎉",
+          description: `Congratulations! You've achieved your goal: ${goal.title}`,
+        });
+        return { ...goal, completed: true };
+      }
+      return goal;
+    }));
+  };
+
   const value = {
     balance,
     addCoins,
@@ -360,6 +431,10 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     transactions,
     addTransaction,
     getMonthlyReport,
+    goals,
+    addGoal,
+    updateGoalProgress,
+    completeGoal,
   };
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
