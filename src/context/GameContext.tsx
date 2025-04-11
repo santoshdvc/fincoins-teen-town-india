@@ -76,7 +76,6 @@ interface GameContextType {
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
-// Sample challenges and marketplace items
 const initialChallenges: Challenge[] = [
   {
     id: "c1",
@@ -148,14 +147,12 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [goals, setGoals] = useState<Goal[]>([]);
 
-  // Check if the user is new when component mounts
   useEffect(() => {
     const userOnboarded = localStorage.getItem("fintown-onboarded");
     if (userOnboarded) {
       setIsNewUser(false);
     }
     
-    // Try to load saved game state
     const savedGameState = localStorage.getItem("fintown-gamestate");
     if (savedGameState) {
       try {
@@ -173,7 +170,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
-  // Save game state when it changes
   useEffect(() => {
     if (!isNewUser) {
       const gameState = { 
@@ -304,7 +300,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
   
   const toggleRealTimeMode = () => {
-    // Reset balance and challenges when enabling real-time mode
     if (!isRealTimeMode) {
       setBalance(0);
       setChallenges([]);
@@ -337,14 +332,12 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const currentMonth = now.getMonth();
     const currentYear = now.getFullYear();
     
-    // Filter transactions for the current month
     const monthlyTransactions = transactions.filter(transaction => {
       const transactionDate = new Date(transaction.date);
       return transactionDate.getMonth() === currentMonth && 
              transactionDate.getFullYear() === currentYear;
     });
     
-    // Calculate totals
     const totalIncome = monthlyTransactions
       .filter(t => t.type === 'income')
       .reduce((sum, t) => sum + t.amount, 0);
@@ -353,7 +346,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       .filter(t => t.type === 'expense')
       .reduce((sum, t) => sum + t.amount, 0);
     
-    // Calculate spending by category
     const categories = monthlyTransactions
       .filter(t => t.type === 'expense')
       .reduce((acc, t) => {
