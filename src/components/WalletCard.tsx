@@ -3,9 +3,10 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { useGameContext } from "@/context/GameContext";
 import { Coins, TrendingUp } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 
 export function WalletCard() {
-  const { balance } = useGameContext();
+  const { balance, isRealTimeMode, toggleRealTimeMode } = useGameContext();
 
   return (
     <Card className="flex flex-col p-5 bg-gradient-to-br from-finpurple to-finpurple-dark text-white overflow-hidden relative">
@@ -27,6 +28,18 @@ export function WalletCard() {
       <div className="flex items-center mt-2 text-xs">
         <TrendingUp className="h-3 w-3 mr-1" />
         <span>Learn to grow your savings!</span>
+      </div>
+      
+      {/* Mode toggle switch */}
+      <div className="mt-4 pt-4 border-t border-white/20 flex justify-between items-center">
+        <span className="text-sm">
+          {isRealTimeMode ? 'Switch to Game Mode' : 'Enable Real-Time Tracking'}
+        </span>
+        <Switch 
+          checked={isRealTimeMode} 
+          onCheckedChange={toggleRealTimeMode}
+          className="bg-white/20 data-[state=checked]:bg-white"
+        />
       </div>
       
       {/* Background decoration */}

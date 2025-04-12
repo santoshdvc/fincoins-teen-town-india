@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { useGameContext } from "@/context/GameContext";
 import { Coins, Menu, LogIn } from "lucide-react";
@@ -6,10 +5,9 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { WalletCard } from "@/components/WalletCard";
-import { Switch } from "@/components/ui/switch";
 
 export function Navbar() {
-  const { balance, isRealTimeMode, toggleRealTimeMode } = useGameContext();
+  const { balance } = useGameContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   return (
@@ -46,15 +44,7 @@ export function Navbar() {
                 </div>
               </PopoverTrigger>
               <PopoverContent className="w-80 p-0 border-none shadow-lg">
-                <div className="mb-2">
-                  <WalletCard />
-                </div>
-                <div className="p-4 bg-white border-t border-border flex justify-between items-center">
-                  <span className="text-sm font-medium">
-                    {isRealTimeMode ? 'Switch to Game Mode' : 'Enable Real-Time Tracking'}
-                  </span>
-                  <Switch checked={isRealTimeMode} onCheckedChange={toggleRealTimeMode} />
-                </div>
+                <WalletCard />
               </PopoverContent>
             </Popover>
             
