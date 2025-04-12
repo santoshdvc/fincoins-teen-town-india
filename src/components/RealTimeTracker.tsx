@@ -67,7 +67,13 @@ export function RealTimeTracker() {
           </p>
         </CardContent>
         <CardFooter>
-          <Button onClick={toggleRealTimeMode}>Enable Real-Time Mode</Button>
+          <Button
+            onClick={() => {
+              if (typeof toggleRealTimeMode === "function") {
+                toggleRealTimeMode();
+              }
+            }}
+          >Enable Real-Time Mode</Button>
         </CardFooter>
       </Card>
     );

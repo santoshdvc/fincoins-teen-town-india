@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { useGameContext } from "@/context/GameContext";
 import { Coins, TrendingUp } from "lucide-react";
-import { Switch } from "@/components/ui/switch";
+import MuiSwitch from "@mui/material/Switch";
 
 export function WalletCard() {
   const { balance, isRealTimeMode, toggleRealTimeMode } = useGameContext();
@@ -35,16 +35,16 @@ export function WalletCard() {
         <span className="text-sm">
           {isRealTimeMode ? 'Switch to Game Mode' : 'Enable Real-Time Tracking'}
         </span>
-        <Switch 
-          checked={isRealTimeMode} 
-          onCheckedChange={toggleRealTimeMode}
-          className="bg-white/20 data-[state=checked]:bg-white"
-        />
+        <MuiSwitch
+          checked={isRealTimeMode}
+          onChange={() => {
+            if (typeof toggleRealTimeMode === 'function') {
+              toggleRealTimeMode();
+            }
+          }}
+          sx={{ color: 'white', '& .MuiSwitch-track': { backgroundColor: 'rgba(255, 255, 255, 0.3)' }, '& .Mui-checked+.MuiSwitch-track': { backgroundColor: 'white' } }}
+        />        
       </div>
-      
-      {/* Background decoration */}
-      <div className="absolute -right-4 -bottom-4 h-24 w-24 bg-white/10 rounded-full blur-xl"></div>
-      <div className="absolute -right-2 -bottom-2 h-12 w-12 bg-white/10 rounded-full blur-sm"></div>
     </Card>
   );
 }
