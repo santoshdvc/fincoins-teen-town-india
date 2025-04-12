@@ -4,9 +4,12 @@ import { useGameContext } from "@/context/GameContext";
 import { Coins, Menu, LogIn } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { WalletCard } from "@/components/WalletCard";
+import { Switch } from "@/components/ui/switch";
 
 export function Navbar() {
-  const { balance } = useGameContext();
+  const { balance, isRealTimeMode, toggleRealTimeMode } = useGameContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   return (
@@ -35,10 +38,25 @@ export function Navbar() {
           </div>
           
           <div className="flex items-center">
-            <div className="hidden md:flex items-center bg-muted px-4 py-1 rounded-full">
-              <Coins className="h-4 w-4 mr-1 text-fingold-dark" />
-              <span className="text-sm font-medium">{balance.toLocaleString()} FC</span>
-            </div>
+            <Popover>
+              <PopoverTrigger asChild>
+                <div className="hidden md:flex items-center bg-muted px-4 py-1 rounded-full cursor-pointer hover:bg-muted/80 transition-colors">
+                  <Coins className="h-4 w-4 mr-1 text-fingold-dark" />
+                  <span className="text-sm font-medium">{balance.toLocaleString()} FC</span>
+                </div>
+              </PopoverTrigger>
+              <PopoverContent className="w-80 p-0 border-none shadow-lg">
+                <div className="mb-2">
+                  <WalletCard />
+                </div>
+                <div className="p-4 bg-white border-t border-border flex justify-between items-center">
+                  <span className="text-sm font-medium">
+                    {isRealTimeMode ? 'Switch to Game Mode' : 'Enable Real-Time Tracking'}
+                  </span>
+                  <Switch checked={isRealTimeMode} onCheckedChange={toggleRealTimeMode} />
+                </div>
+              </PopoverContent>
+            </Popover>
             
             <Link to="/auth" className="ml-4 hidden sm:block">
               <Button variant="outline" size="sm" className="flex items-center">
