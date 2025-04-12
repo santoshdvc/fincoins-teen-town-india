@@ -157,8 +157,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (savedGameState) {
       try {
         const { balance, challenges, investments, purchasedItems, isRealTimeMode, transactions, goals } = JSON.parse(savedGameState);
-        setBalance(!isRealTimeMode ? balance : 0);
-        setChallenges(!isRealTimeMode ? challenges : []);
+        setBalance(balance);
+        setChallenges(challenges);
         setInvestments(investments);
         setPurchasedItems(purchasedItems);
         setIsRealTimeMode(isRealTimeMode || false);
