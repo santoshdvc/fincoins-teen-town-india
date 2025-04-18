@@ -1,6 +1,6 @@
 
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,6 +16,7 @@ import { Coins, Mail, Phone, ArrowLeft, CircleX } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
+import { auth, provider } from "@/../firebase.config";
 
 const Auth = () => {
   const [isEmailAuth, setIsEmailAuth] = useState(true);
@@ -25,16 +26,23 @@ const Auth = () => {
   const [verificationCode, setVerificationCode] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
-  const handleEmailLogin = (e: React.FormEvent) => {
+  const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically handle the login with a service like Clerk
-    toast({
-      title: "Login attempted",
-      description: `Tried to login with email: ${email}`,
-    });
+    try {
+      const userCredential = await auth.signInWithEmailAndPassword(email, password);
+      if (userCredential.user) {
+        toast({
+          title: "Login Successful",
+          description: `Welcome back!`,
+        });
+        navigate("/");
+      }
+    } catch (error: any) {
+      toast({ title: "Login Failed", description: error.message });
+    }
   };
-
   const handlePhoneLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isVerifying) {
@@ -53,12 +61,38 @@ const Auth = () => {
     }
   };
 
-  const handleGoogleLogin = () => {
-    toast({
-      title: "Google Login",
-      description: "Attempted to login with Google",
-    });
+  const handleGoogleLogin = async () => {
+    try {      
+      auth.languageCode = 'en';
+      await auth.signInWithRedirect(provider);      
+      // The redirect result will be handled in a useEffect
+    } catch (error: any) {      
+      if (error.code === 'auth/popup-closed-by-user') {
+        toast({ title: "Login Cancelled", description: "You cancelled the Google login." });
+      } else {
+        toast({ title: "googleLogin Failed", description: error.message });
+        console.error(error);
+      }
+    }
   };
+
+  useEffect(() => {
+    const checkRedirectResult = async () => {
+      try {
+        const result = await auth.getRedirectResult();
+        if (result?.user) {
+          toast({
+            title: "Login Successful",
+            description: `Welcome back!`,
+          });
+          navigate("/");
+        }
+      } catch (error: any) {
+        toast({ title: "Google Login Failed", description: error.message });
+      }
+    };
+    checkRedirectResult();
+  }, [navigate, toast]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -202,7 +236,7 @@ const Auth = () => {
               
               <TabsContent value="signup" className="space-y-4">
                 {isEmailAuth ? (
-                  <form onSubmit={handleEmailLogin} className="space-y-4">
+                  <form onSubmit={handleEmailSignup} className="space-y-4">
                     <div className="space-y-2">
                       <Input 
                         type="email" 
@@ -219,7 +253,7 @@ const Auth = () => {
                         required
                       />
                     </div>
-                    <Button type="submit" className="w-full">Sign Up</Button>
+                    <Button type="submit" className="w-full">Signup</Button>
                   </form>
                 ) : isVerifying ? (
                   <form onSubmit={handlePhoneLogin} className="space-y-4">
@@ -322,6 +356,24 @@ const Auth = () => {
       </div>
     </div>
   );
+};
+
+const handleEmailSignup = async (e: React.FormEvent) => {
+  e.preventDefault();
+  const email = (e.target as any).elements[0].value;
+  const password = (e.target as any).elements[1].value;
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  try {
+    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+    if (userCredential.user) {
+      toast({ title: "Signup Successful", description: "Welcome to FinTown!" });
+      navigate("/");
+    }
+  } catch (error: any) {
+    toast({ title: "Signup Failed", description: error.message });
+  }
 };
 
 export default Auth;
